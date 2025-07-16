@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>遊戯王カード検索</title>
+    <title>遊☆戯☆王デュエルモンスターズ エキスパート2006 カード検索</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>遊戯王カード検索</h1>
+        <h1>遊☆戯☆王DM エキスパート2006 カード検索</h1>
+        <p class="game-info">GBAゲーム専用のカード検索ツールです</p>
         
         <!-- 検索フォーム -->
         <div class="search-form">
             <!-- パック選択とカード名検索を横並びに -->
             <div class="search-row">
                 <div class="form-group">
-                    <label for="pack-select">パック選択:</label>
+                    <label for="pack-select">ゲーム内パック選択:</label>
                     <select id="pack-select">
                         <option value="">全パック</option>
                         <!-- パック一覧は JavaScript で動的生成 -->
@@ -84,6 +85,12 @@
             <button id="close-reverse">閉じる</button>
         </div>
     </div>
+    
+    <!-- フッター情報 -->
+    <footer class="footer">
+        <p>「遊☆戯☆王デュエルモンスターズ エキスパート2006」（GBA、2006年）専用検索ツール</p>
+        <p>遊戯王は株式会社コナミデジタルエンタテインメントの登録商標です。</p>
+    </footer>
     
     <script src="script.js"></script>
 </body>
