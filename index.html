@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遊戯王カード検索</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>遊戯王カード検索</h1>
+        
+        <!-- 検索フォーム -->
+        <div class="search-form">
+            <!-- パック選択とカード名検索を横並びに -->
+            <div class="search-row">
+                <div class="form-group">
+                    <label for="pack-select">パック選択:</label>
+                    <select id="pack-select">
+                        <option value="">全パック</option>
+                        <!-- パック一覧は JavaScript で動的生成 -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="card-name">カード名:</label>
+                    <input type="text" id="card-name" placeholder="カード名を入力">
+                </div>
+            </div>
+            
+            <!-- カード種類フィルター -->
+            <div class="form-group">
+                <label>カード種類:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="type-1" value="1" checked> 通常</label>
+                    <label><input type="checkbox" id="type-2" value="2" checked> 効果</label>
+                    <label><input type="checkbox" id="type-3" value="3" checked> 融合</label>
+                    <label><input type="checkbox" id="type-4" value="4" checked> 魔法</label>
+                    <label><input type="checkbox" id="type-5" value="5" checked> 罠</label>
+                </div>
+            </div>
+            
+            <!-- 検索ボタン -->
+            <div class="button-container">
+                <button id="search-btn">検索</button>
+                <button id="clear-btn">クリア</button>
+            </div>
+        </div>
+        
+        <!-- 検索結果 -->
+        <div class="results-section">
+            <div class="results-header">
+                <h2>検索結果</h2>
+                <span id="result-count">0件</span>
+            </div>
+            
+            <!-- デスクトップ用テーブル表示 -->
+            <div class="results-table-container desktop-only">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>カードID</th>
+                            <th>種類</th>
+                            <th>カード名</th>
+                            <th>パック</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody">
+                        <!-- 検索結果は JavaScript で動的生成 -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- モバイル用カード表示 -->
+            <div class="results-cards-container mobile-only" id="results-cards">
+                <!-- 検索結果は JavaScript で動的生成 -->
+            </div>
+        </div>
+        
+        <!-- 逆引き結果（カード名クリック時に表示） -->
+        <div id="reverse-lookup" class="reverse-lookup hidden">
+            <h3>パック情報</h3>
+            <div id="pack-info"></div>
+            <button id="close-reverse">閉じる</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
