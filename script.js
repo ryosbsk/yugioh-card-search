@@ -17,10 +17,10 @@ const closeReverse = document.getElementById('close-reverse');
 
 // パック剥き機能用のDOM要素
 const packSelectOpen = document.getElementById('pack-select-open');
-const openPackBtn = document.getElementById('open-pack-btn');
+const open1PackBtn = document.getElementById('open-1-pack-btn');
+const open5PackBtn = document.getElementById('open-5-pack-btn');
 const packResult = document.getElementById('pack-result');
 const packCards = document.getElementById('pack-cards');
-const openAgainBtn = document.getElementById('open-again-btn');
 
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
@@ -157,8 +157,8 @@ function setupEventListeners() {
     });
     
     // パック剥き機能
-    openPackBtn.addEventListener('click', openPack);
-    openAgainBtn.addEventListener('click', openPack);
+    open1PackBtn.addEventListener('click', () => openPack(1));
+    open5PackBtn.addEventListener('click', () => openPack(5));
 }
 
 // 検索実行
@@ -352,7 +352,7 @@ function showTab(tabName) {
 }
 
 // パック剥き機能
-function openPack() {
+function openPack(packCount) {
     const selectedPackId = packSelectOpen.value;
     
     if (!selectedPackId) {
@@ -361,21 +361,25 @@ function openPack() {
     }
     
     // 選択されたパックに収録されているカードを取得
-    const packCards = cardsData.filter(card => {
+    const availableCards = cardsData.filter(card => {
         const cardPacks = card.packs.split(',');
         return cardPacks.some(pack => pack.trim().padStart(2, '0') === selectedPackId);
     });
     
-    if (packCards.length === 0) {
+    if (availableCards.length === 0) {
         alert('選択されたパックにカードが見つかりません。');
         return;
     }
     
-    // 5枚をランダムに選択（重複なし）
-    const selectedCards = getRandomCards(packCards, 5);
+    // 複数パック開封処理
+    const results = [];
+    for (let i = 0; i < packCount; i++) {
+        const selectedCards = getRandomCards(availableCards, 5);
+        results.push(selectedCards);
+    }
     
     // 結果を表示
-    displayPackResult(selectedCards);
+    displayPackResult(results, packCount);
 }
 
 // 配列からランダムに指定数の要素を選択（重複なし）
@@ -385,23 +389,59 @@ function getRandomCards(cards, count) {
 }
 
 // パック剥き結果を表示
-function displayPackResult(cards) {
+function displayPackResult(results, packCount) {
     packCards.innerHTML = '';
     
     // 結果エリアを表示
     packResult.classList.remove('hidden');
     
-    // カードを1枚ずつ段階的に表示
-    cards.forEach((card, index) => {
-        setTimeout(() => {
-            const cardElement = document.createElement('div');
-            cardElement.className = 'pack-card';
-            cardElement.innerHTML = `
-                <div class="pack-card-name">${card.name}</div>
-                <div class="pack-card-type">${getTypeText(card.type)}</div>
-                <div class="pack-card-id">ID: ${card.id}</div>
-            `;
-            packCards.appendChild(cardElement);
-        }, index * 300); // 0.3秒ごとに表示
-    });
+    if (packCount === 1) {
+        // 1パック開封時: 単一パック表示
+        const singlePackDiv = document.createElement('div');
+        singlePackDiv.className = 'single-pack-cards';
+        packCards.appendChild(singlePackDiv);
+        
+        // カードを1枚ずつ段階的に表示
+        results[0].forEach((card, index) => {
+            setTimeout(() => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'pack-card';
+                cardElement.innerHTML = `
+                    <div class="pack-card-name">${card.name}</div>
+                    <div class="pack-card-type">${getTypeText(card.type)}</div>
+                    <div class="pack-card-id">ID: ${card.id}</div>
+                `;
+                singlePackDiv.appendChild(cardElement);
+            }, index * 300); // 0.3秒ごとに表示
+        });
+    } else {
+        // 5パック開封時: パック別表示
+        results.forEach((packResult, packIndex) => {
+            setTimeout(() => {
+                const packGroupDiv = document.createElement('div');
+                packGroupDiv.className = 'pack-group';
+                packGroupDiv.innerHTML = `<h4>${packIndex + 1}パック目</h4>`;
+                
+                const packGroupCards = document.createElement('div');
+                packGroupCards.className = 'pack-group-cards';
+                packGroupDiv.appendChild(packGroupCards);
+                
+                packCards.appendChild(packGroupDiv);
+                
+                // パック内のカードを表示
+                packResult.forEach((card, cardIndex) => {
+                    setTimeout(() => {
+                        const cardElement = document.createElement('div');
+                        cardElement.className = 'pack-card';
+                        cardElement.innerHTML = `
+                            <div class="pack-card-name">${card.name}</div>
+                            <div class="pack-card-type">${getTypeText(card.type)}</div>
+                            <div class="pack-card-id">ID: ${card.id}</div>
+                        `;
+                        packGroupCards.appendChild(cardElement);
+                    }, cardIndex * 100); // 0.1秒ごとに表示
+                });
+            }, packIndex * 800); // 0.8秒ごとにパック表示
+        });
+    }
 }

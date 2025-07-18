@@ -107,16 +107,18 @@
                             <!-- パック一覧は JavaScript で動的生成 -->
                         </select>
                     </div>
-                    <button id="open-pack-btn" class="pack-btn">パック剥き！</button>
+                    <div class="pack-buttons">
+                        <button id="open-1-pack-btn" class="pack-btn">1パック開封</button>
+                        <button id="open-5-pack-btn" class="pack-btn">5パック開封</button>
+                    </div>
                 </div>
                 
                 <!-- 結果表示エリア -->
                 <div id="pack-result" class="pack-result hidden">
                     <h3>パック剥き結果</h3>
                     <div id="pack-cards" class="pack-cards">
-                        <!-- 5枚のカード結果がここに表示される -->
+                        <!-- カード結果がここに表示される -->
                     </div>
-                    <button id="open-again-btn" class="pack-btn">もう一度剥く</button>
                 </div>
             </div>
         </div>
