@@ -15,6 +15,13 @@ const reverseLookup = document.getElementById('reverse-lookup');
 const packInfo = document.getElementById('pack-info');
 const closeReverse = document.getElementById('close-reverse');
 
+// パック剥き機能用のDOM要素
+const packSelectOpen = document.getElementById('pack-select-open');
+const openPackBtn = document.getElementById('open-pack-btn');
+const packResult = document.getElementById('pack-result');
+const packCards = document.getElementById('pack-cards');
+const openAgainBtn = document.getElementById('open-again-btn');
+
 // 初期化
 document.addEventListener('DOMContentLoaded', async () => {
     await loadData();
@@ -116,10 +123,17 @@ function parsePackCSV(text) {
 // パックプルダウンを生成
 function populatePackSelect() {
     packsData.forEach(pack => {
+        // 検索用プルダウン
         const option = document.createElement('option');
         option.value = pack.id;
         option.textContent = pack.name;
         packSelect.appendChild(option);
+        
+        // パック剥き用プルダウン
+        const optionOpen = document.createElement('option');
+        optionOpen.value = pack.id;
+        optionOpen.textContent = pack.name;
+        packSelectOpen.appendChild(optionOpen);
     });
 }
 
@@ -141,6 +155,10 @@ function setupEventListeners() {
     closeReverse.addEventListener('click', () => {
         reverseLookup.classList.add('hidden');
     });
+    
+    // パック剥き機能
+    openPackBtn.addEventListener('click', openPack);
+    openAgainBtn.addEventListener('click', openPack);
 }
 
 // 検索実行
@@ -309,4 +327,81 @@ function clearForm() {
     document.getElementById('type-4').checked = true;
     document.getElementById('type-5').checked = true;
     performSearch();
+}
+
+// タブ切り替え機能
+function showTab(tabName) {
+    // すべてのタブボタンからactiveクラスを削除
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // すべてのタブコンテンツを非表示
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // 選択されたタブボタンにactiveクラスを追加
+    document.querySelector(`button[onclick="showTab('${tabName}')"]`).classList.add('active');
+    
+    // 選択されたタブコンテンツを表示
+    const targetTab = document.getElementById(tabName + '-tab');
+    if (targetTab) {
+        targetTab.classList.add('active');
+    }
+}
+
+// パック剥き機能
+function openPack() {
+    const selectedPackId = packSelectOpen.value;
+    
+    if (!selectedPackId) {
+        alert('パックを選択してください。');
+        return;
+    }
+    
+    // 選択されたパックに収録されているカードを取得
+    const packCards = cardsData.filter(card => {
+        const cardPacks = card.packs.split(',');
+        return cardPacks.some(pack => pack.trim().padStart(2, '0') === selectedPackId);
+    });
+    
+    if (packCards.length === 0) {
+        alert('選択されたパックにカードが見つかりません。');
+        return;
+    }
+    
+    // 5枚をランダムに選択（重複なし）
+    const selectedCards = getRandomCards(packCards, 5);
+    
+    // 結果を表示
+    displayPackResult(selectedCards);
+}
+
+// 配列からランダムに指定数の要素を選択（重複なし）
+function getRandomCards(cards, count) {
+    const shuffled = [...cards].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, Math.min(count, cards.length));
+}
+
+// パック剥き結果を表示
+function displayPackResult(cards) {
+    packCards.innerHTML = '';
+    
+    // 結果エリアを表示
+    packResult.classList.remove('hidden');
+    
+    // カードを1枚ずつ段階的に表示
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            const cardElement = document.createElement('div');
+            cardElement.className = 'pack-card';
+            cardElement.innerHTML = `
+                <div class="pack-card-name">${card.name}</div>
+                <div class="pack-card-type">${getTypeText(card.type)}</div>
+                <div class="pack-card-id">ID: ${card.id}</div>
+            `;
+            packCards.appendChild(cardElement);
+        }, index * 300); // 0.3秒ごとに表示
+    });
 }
