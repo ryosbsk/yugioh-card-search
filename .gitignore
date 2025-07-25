@@ -33,3 +33,6 @@ pids
 # Cache
 .cache/
 *.cache
+
+# Learning materials (local only)
+javascript-learning-guide.md
